@@ -7,7 +7,7 @@
           <Header />
           <main class="flex flex-1 flex-col gap-2 p-2">
             <div class="min-h-[100vh] flex-1 rounded-xl p-4 bg-primary md:min-h-min">
-              <slot />
+              <router-view />
             </div>
           </main>
           <Footer />
@@ -16,5 +16,3 @@
     </SidebarProvider>
   </div>
 </template>
-
-<script setup lang="ts"></script>

@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppSidebar: typeof import('./src/components/layouts/AppSidebar.vue')['default']
+    AuthLayout: typeof import('./src/components/layouts/AuthLayout.vue')['default']
     Breadcrumb: typeof import('./src/components/ui/breadcrumb/Breadcrumb.vue')['default']
     BreadcrumbEllipsis: typeof import('./src/components/ui/breadcrumb/BreadcrumbEllipsis.vue')['default']
     BreadcrumbItem: typeof import('./src/components/ui/breadcrumb/BreadcrumbItem.vue')['default']
@@ -17,6 +18,7 @@ declare module 'vue' {
     BreadcrumbPage: typeof import('./src/components/ui/breadcrumb/BreadcrumbPage.vue')['default']
     BreadcrumbSeparator: typeof import('./src/components/ui/breadcrumb/BreadcrumbSeparator.vue')['default']
     Button: typeof import('./src/components/ui/button/Button.vue')['default']
+    Checkbox: typeof import('./src/components/ui/checkbox/Checkbox.vue')['default']
     Collapsible: typeof import('./src/components/ui/collapsible/Collapsible.vue')['default']
     CollapsibleContent: typeof import('./src/components/ui/collapsible/CollapsibleContent.vue')['default']
     CollapsibleTrigger: typeof import('./src/components/ui/collapsible/CollapsibleTrigger.vue')['default']
@@ -25,6 +27,7 @@ declare module 'vue' {
     Header: typeof import('./src/components/layouts/Header.vue')['default']
     Iconify: typeof import('@iconify/vue')['Iconify']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
+    Label: typeof import('./src/components/ui/label/Label.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Separator: typeof import('./src/components/ui/separator/Separator.vue')['default']

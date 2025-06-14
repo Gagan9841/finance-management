@@ -2,14 +2,17 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
 import { Icon } from '@iconify/vue'
 
-const app = createApp(App)
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
-app.use(createPinia())
+const app = createApp(App)
+app.use(pinia)
 app.use(router)
 app.component('Iconify', Icon)
 
