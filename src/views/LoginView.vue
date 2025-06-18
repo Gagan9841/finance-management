@@ -62,7 +62,7 @@
 
           <Button
             type="submit"
-            class="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            class="w-full cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
           >
             Sign in
           </Button>
@@ -94,15 +94,31 @@
 
 <script setup>
 import { reactive } from 'vue'
-
+import { login } from '@/api/auth'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 const form = reactive({
   email: '',
   password: '',
   rememberMe: false,
 })
 
-const handleSubmit = () => {
-  console.log('Login attempt:', form)
+const { setUser, setToken } = useAuthStore()
+
+const router = useRouter()
+
+const handleSubmit = async () => {
+  try {
+    const response = await login(form)
+    setUser(response.data.user)
+    setToken(response.data.token)
+
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    await router.push({ name: 'home' })
+  } catch (error) {
+    console.error('Login error:', error)
+  }
 }
 
 const handleForgotPassword = () => {

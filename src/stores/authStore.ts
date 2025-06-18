@@ -11,26 +11,26 @@ export const useAuthStore = defineStore(
     const token = ref<string | null>(null)
     const permissions = ref<string[]>([])
 
-    const isAuthenticated = computed(() => !!token.value)
+    const isAuthenticated = computed(() => !!cookies.getEncrypted<string>('auth_token'))
+
     const hasPermission = computed(
       () => (permission: string) => permissions.value.includes(permission),
     )
-    const userFullName = computed(() =>
-      user.value ? `${user.value.firstName} ${user.value.lastName}` : '',
-    )
+    const userFullName = computed(() => (user.value ? `${user.value.name}` : ''))
 
     const setUser = (userData: User | null) => {
       user.value = userData
+      if (userData) {
+        cookies.setEncrypted('user', userData)
+      } else {
+        cookies.remove('user')
+      }
     }
 
     const setToken = (newToken: string | null) => {
       token.value = newToken
       if (newToken) {
-        cookies.setEncrypted('auth_token', newToken, {
-          expires: 1 * 24 * 60 * 60 * 1000,
-          secure: true,
-          sameSite: 'Strict',
-        })
+        cookies.setEncrypted('auth_token', newToken)
       } else {
         cookies.remove('auth_token')
       }
@@ -38,32 +38,6 @@ export const useAuthStore = defineStore(
 
     const setPermissions = (newPermissions: string[]) => {
       permissions.value = newPermissions
-    }
-
-    const login = async (credentials: { email: string; password: string }) => {
-      try {
-        const response = await fetch('/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(credentials),
-        })
-
-        if (!response.ok) {
-          throw new Error('Login failed')
-        }
-
-        const data = await response.json()
-        setUser(data.user)
-        setToken(data.token)
-        setPermissions(data.permissions)
-
-        return true
-      } catch (error) {
-        console.error('Login error:', error)
-        return false
-      }
     }
 
     const logout = () => {
@@ -115,7 +89,6 @@ export const useAuthStore = defineStore(
       setUser,
       setToken,
       setPermissions,
-      login,
       logout,
       checkAuth,
     }

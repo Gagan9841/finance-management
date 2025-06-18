@@ -65,6 +65,7 @@ declare module 'vue' {
     SidebarSeparator: typeof import('./src/components/ui/sidebar/SidebarSeparator.vue')['default']
     SidebarTrigger: typeof import('./src/components/ui/sidebar/SidebarTrigger.vue')['default']
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
+    Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
     Tooltip: typeof import('./src/components/ui/tooltip/Tooltip.vue')['default']
     TooltipContent: typeof import('./src/components/ui/tooltip/TooltipContent.vue')['default']
     TooltipProvider: typeof import('./src/components/ui/tooltip/TooltipProvider.vue')['default']

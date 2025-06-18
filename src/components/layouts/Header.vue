@@ -5,7 +5,7 @@
     <div class="flex items-center gap-2">
       <SidebarTrigger class="size-2">
         <Button variant="ghost" type="button" size="icon" class="h-9 cursor-pointer w-full">
-          <Menu class="h-4 w-4" />
+          <!-- <Menu class="h-4 w-4" /> -->
           <span class="sr-only">Toggle sidebar</span>
         </Button>
       </SidebarTrigger>

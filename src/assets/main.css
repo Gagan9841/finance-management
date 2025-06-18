@@ -56,6 +56,15 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 
+  /* Success colors */
+  --success: oklch(0.65 0.14 146);
+  --error: oklch(0.6368 0.2078 25.3313);
+  --info: oklch(0.9276 0.0058 264.5313);
+  --warning: oklch(0.9276 0.0058 264.5313);
+  --success-foreground: oklch(0.9219 0 0);
+  --error-foreground: oklch(1 0 0);
+  --info-foreground: oklch(0.9219 0 0);
+  --warning-foreground: oklch(0.9219 0 0);
 }
 
 :root {
@@ -156,6 +165,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

@@ -1,3 +1,5 @@
+import { useAuthStore } from '@/stores/authStore'
+import { computed } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -63,12 +65,13 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('token')
+  const authStore = useAuthStore()
+  const isAuthenticated = computed(() => authStore.isAuthenticated)
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
-  if (requiresAuth && !isAuthenticated) {
+  if (requiresAuth && !isAuthenticated.value) {
     next({ name: 'auth.login' })
-  } else if (!requiresAuth && isAuthenticated) {
+  } else if (from.name === 'auth.login' && isAuthenticated.value) {
     next({ name: 'home' })
   } else {
     next()

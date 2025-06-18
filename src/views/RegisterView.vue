@@ -129,6 +129,7 @@
 
 <script setup>
 import { reactive } from 'vue'
+import { register } from '@/api/auth'
 
 const form = reactive({
   name: '',
@@ -138,8 +139,13 @@ const form = reactive({
   acceptTerms: false,
 })
 
-const handleSubmit = () => {
-  console.log('Registration attempt:', form)
+const handleSubmit = async () => {
+  try {
+    const response = await register(form)
+    console.log('Registration response:', response)
+  } catch (error) {
+    console.error('Registration error:', error)
+  }
 }
 
 const handleTermsClick = () => {

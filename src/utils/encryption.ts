@@ -5,7 +5,7 @@ class Encryption {
   private readonly config: EncryptionConfig
 
   constructor() {
-    // The key should be the same as Laravel's APP_KEY (base64 decoded)
+    // The key should be the same as Laravel's APP_KEY
     this.config = {
       key: import.meta.env.VITE_APP_KEY ?? '',
       cipher: 'AES-256-CBC',
@@ -70,7 +70,7 @@ class Encryption {
   }
 
   /**
-   * Get the encryption key
+   * Get the encryption key, handling Laravel's base64: prefix
    * @returns The encryption key
    */
   private getKey(): CryptoJS.lib.WordArray {
@@ -78,7 +78,33 @@ class Encryption {
       throw new Error('Encryption key is not set')
     }
 
-    return CryptoJS.enc.Base64.parse(this.config.key)
+    let keyString = this.config.key
+
+    // Handle Laravel's base64: prefix
+    if (keyString.startsWith('base64:')) {
+      keyString = keyString.substring(7) // Remove 'base64:' prefix
+      return CryptoJS.enc.Base64.parse(keyString)
+    }
+
+    // If no base64: prefix, treat as raw string and convert to base64
+    // This is for backward compatibility or custom key formats
+    return CryptoJS.enc.Utf8.parse(keyString)
+  }
+
+  /**
+   * Validate that the key is properly formatted
+   * @returns True if key is valid
+   */
+  validateKey(): boolean {
+    try {
+      const key = this.getKey()
+
+      // AES-256 requires a 32-byte (256-bit) key
+      return key.sigBytes === 32
+    } catch (error) {
+      console.error('Key validation failed:', error)
+      return false
+    }
   }
 }
 

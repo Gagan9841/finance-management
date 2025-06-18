@@ -1,1 +1,18 @@
 npx lint-staged
+
+
+feat: add AuthLayout component for authentication views with fade transition
+
+feat: implement Checkbox component with customizable styles and slots
+
+feat: create Label component for form labeling with customizable styles
+
+feat: add authStore for managing user authentication state and session
+
+feat: implement cookies utility for managing cookies with encryption support
+
+feat: add encryption utility for secure data handling
+
+feat: create LoginView for user authentication with form handling
+
+feat: create RegisterView for user registration with form handling
