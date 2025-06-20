@@ -2,6 +2,7 @@ import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig 
 import { useAuthStore } from '@/stores/authStore'
 import { useLoadingStore } from '@/stores/loadingStore'
 import router from '@/router'
+import cookies from './cookies'
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   skipGlobalLoading?: boolean
@@ -18,10 +19,9 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(
-  (config: CustomAxiosRequestConfig) => {
+  async (config: CustomAxiosRequestConfig) => {
     const { startLoading } = useLoadingStore()
-    const { token } = useAuthStore()
-
+    const token = cookies.get<string>('auth_token')
     if (!config.skipGlobalLoading) {
       startLoading()
     }

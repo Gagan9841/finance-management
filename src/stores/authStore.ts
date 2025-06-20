@@ -11,12 +11,16 @@ export const useAuthStore = defineStore(
     const token = ref<string | null>(null)
     const permissions = ref<string[]>([])
 
-    const isAuthenticated = computed(() => !!cookies.getEncrypted<string>('auth_token'))
+    const isAuthenticated = computed(() => !!token.value)
 
     const hasPermission = computed(
       () => (permission: string) => permissions.value.includes(permission),
     )
     const userFullName = computed(() => (user.value ? `${user.value.name}` : ''))
+
+    const getUserInfo = async () => {
+      return { user: user.value, permissions: permissions.value, token: token.value }
+    }
 
     const setUser = (userData: User | null) => {
       user.value = userData
@@ -87,6 +91,7 @@ export const useAuthStore = defineStore(
       userFullName,
 
       setUser,
+      getUserInfo,
       setToken,
       setPermissions,
       logout,
@@ -102,7 +107,7 @@ export const useAuthStore = defineStore(
         serialize: (state: unknown) => encryption.encrypt(JSON.stringify(state)),
       },
       key: 'auth',
-      pick: ['user', 'permissions'],
+      pick: ['user', 'permissions', 'token'],
     },
   },
 )

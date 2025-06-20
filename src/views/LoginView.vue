@@ -96,7 +96,7 @@
 import { reactive } from 'vue'
 import { login } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 const form = reactive({
   email: '',
   password: '',
@@ -106,16 +106,16 @@ const form = reactive({
 const { setUser, setToken } = useAuthStore()
 
 const router = useRouter()
+const route = useRoute()
 
 const handleSubmit = async () => {
   try {
     const response = await login(form)
     setUser(response.data.user)
     setToken(response.data.token)
-
-    await new Promise((resolve) => setTimeout(resolve, 3000))
-
-    await router.push({ name: 'home' })
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const redirect = route.query.redirect || { name: 'home' }
+    await router.push(redirect)
   } catch (error) {
     console.error('Login error:', error)
   }

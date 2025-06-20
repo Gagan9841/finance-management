@@ -1,5 +1,4 @@
 import { useAuthStore } from '@/stores/authStore'
-import { computed } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -66,13 +65,17 @@ const router = createRouter({
 // Navigation guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  const isAuthenticated = computed(() => authStore.isAuthenticated)
+  const isAuthenticated = authStore.isAuthenticated
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const isAuthRoute = to.matched.some((record) => record.path.startsWith('/auth'))
 
-  if (requiresAuth && !isAuthenticated.value) {
-    next({ name: 'auth.login' })
-  } else if (from.name === 'auth.login' && isAuthenticated.value) {
-    next({ name: 'home' })
+  // If trying to access a protected route and not authenticated, redirect to login
+  if (requiresAuth && !isAuthenticated) {
+    next({ name: 'auth.login', query: { redirect: to.fullPath } })
+  }
+  // If authenticated and trying to access login/register, redirect to home/dashboard
+  else if (isAuthenticated && isAuthRoute) {
+    next({ name: 'home' }) // or your dashboard route
   } else {
     next()
   }
