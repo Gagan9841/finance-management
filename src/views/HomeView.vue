@@ -13,7 +13,7 @@ const loadDashboardData = async () => {
       dashboardData.value = res.data
     })
     .catch((err: AxiosError) => {
-      handleError(err)
+      handleError(err as AxiosError)
     })
 }
 

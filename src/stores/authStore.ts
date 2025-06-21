@@ -99,7 +99,6 @@ export const useAuthStore = defineStore(
     }
   },
   {
-    //@ts-expect-error - Pinia persist plugin types are not properly recognized
     persist: {
       storage: sessionStorage,
       serializer: {
