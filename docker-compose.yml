@@ -1,0 +1,16 @@
+services:
+  finance_frontend:
+    image: finance-frontend
+    container_name: finance-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 7090:80
+    networks:
+      - finance_network
+
+networks:
+  finance_network:
+    external: true
