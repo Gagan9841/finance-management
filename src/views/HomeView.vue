@@ -2,9 +2,10 @@
 import { getDashboardData } from '@/api/dashboard/dashboard'
 import { useResponse } from '@/composables/useResponse'
 import type { AxiosError } from 'axios'
+import type { ApiResponse } from '@/types/response'
 import { onMounted, ref } from 'vue'
 
-const { handleError } = useResponse()
+const { handleError } = useResponse<unknown>()
 
 const dashboardData = ref<unknown>(null)
 const loadDashboardData = async () => {
@@ -12,8 +13,8 @@ const loadDashboardData = async () => {
     .then((res) => {
       dashboardData.value = res.data
     })
-    .catch((err: AxiosError) => {
-      handleError(err as AxiosError)
+    .catch((err: AxiosError<ApiResponse<unknown>>) => {
+      handleError(err)
     })
 }
 
