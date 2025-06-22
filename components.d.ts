@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Apexchart: typeof import('vue3-apexcharts')['Apexchart']
     AppSidebar: typeof import('./src/components/layouts/AppSidebar.vue')['default']
     AuthLayout: typeof import('./src/components/layouts/AuthLayout.vue')['default']
     Avatar: typeof import('./src/components/ui/avatar/Avatar.vue')['default']

@@ -23,6 +23,10 @@ export default defineConfig({
           from: '@iconify/vue',
           names: ['Iconify'],
         },
+        {
+          from: 'vue3-apexcharts',
+          names: ['Apexchart'],
+        },
       ],
     }),
   ],
