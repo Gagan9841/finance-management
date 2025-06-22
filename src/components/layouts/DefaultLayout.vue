@@ -1,18 +1,23 @@
 <template>
-  <div class="flex h-screen">
+  <div class="flex items-center justify-center min-h-screen w-full bg-muted px-2">
     <SidebarProvider>
-      <AppSidebar class="hidden lg:flex" />
+      <AppSidebar />
       <SidebarInset>
-        <div class="flex flex-1 flex-col">
-          <Header />
-          <main class="flex flex-1 flex-col gap-2 p-2">
-            <div class="min-h-[100vh] flex-1 rounded-xl p-4 bg-background md:min-h-min">
-              <router-view />
-            </div>
-          </main>
-          <Footer />
-        </div>
+        <Header />
+        <main class="flex flex-1 flex-col gap-2 px-2 py-2 w-full">
+          <div class="flex-1 rounded-xl p-4 bg-muted">
+            <router-view />
+          </div>
+        </main>
+        <Footer />
       </SidebarInset>
     </SidebarProvider>
   </div>
 </template>
+
+<script setup lang="ts">
+import { SidebarProvider, SidebarInset } from '../ui/sidebar'
+import AppSidebar from './AppSidebar.vue'
+import Header from './Header.vue'
+import Footer from './Footer.vue'
+</script>

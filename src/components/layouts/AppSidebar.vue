@@ -35,7 +35,7 @@ const data: { navMain: NavItem[]; navFooter: NavFooter[] } = {
     {
       title: 'Dashboard',
       icon: 'material-symbols:dashboard',
-      url: '/dashboard',
+      url: '/',
     },
     {
       title: 'Transactions',
@@ -87,7 +87,7 @@ const isParentActive = (item: NavItem) => {
 </script>
 
 <template>
-  <Sidebar v-bind="props" class="border-r border-border/40">
+  <Sidebar v-bind="props" class="border-r border-border/40 bg-background shadow-md rounded-lg">
     <SidebarHeader class="border-b border-border/40">
       <div class="flex items-center gap-3 px-6 py-4">
         <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
