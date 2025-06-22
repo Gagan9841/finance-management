@@ -129,7 +129,11 @@
 
 <script setup>
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import { register } from '@/api/auth'
+import encryption from '@/utils/encryption'
+
+const router = useRouter()
 
 const form = reactive({
   name: '',
@@ -141,8 +145,12 @@ const form = reactive({
 
 const handleSubmit = async () => {
   try {
-    const response = await register(form)
-    console.log('Registration response:', response)
+    await register(form).then((res) => {
+      router.push({
+        name: 'auth.login',
+        query: { email: encodeURIComponent(encryption.encrypt(res.data.email)) },
+      })
+    })
   } catch (error) {
     console.error('Registration error:', error)
   }

@@ -33,7 +33,7 @@
               id="password"
               v-model="form.password"
               type="password"
-              placeholder="••••••••"
+              placeholder="*****"
               class="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors bg-background"
               required
             />
@@ -97,16 +97,18 @@ import { reactive } from 'vue'
 import { login } from '@/api/auth'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter, useRoute } from 'vue-router'
-const form = reactive({
-  email: '',
-  password: '',
-  rememberMe: false,
-})
+import encryption from '@/utils/encryption'
 
 const { setUser, setToken } = useAuthStore()
 
 const router = useRouter()
 const route = useRoute()
+
+const form = reactive({
+  email: route.query.email ? encryption.decrypt(decodeURIComponent(route.query.email)) : '',
+  password: '',
+  rememberMe: false,
+})
 
 const handleSubmit = async () => {
   try {

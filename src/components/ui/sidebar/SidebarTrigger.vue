@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
-import { PanelLeft } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useSidebar } from './utils'
@@ -18,10 +17,10 @@ const { toggleSidebar } = useSidebar()
     data-slot="sidebar-trigger"
     variant="ghost"
     size="icon"
-    :class="cn('h-7 w-7', props.class)"
+    :class="cn('h-7 w-7 cursor-pointer', props.class)"
     @click="toggleSidebar"
   >
-    <PanelLeft />
+    <Iconify icon="akar-icons:three-line-horizontal" class="h-4 w-4" />
     <span class="sr-only">Toggle Sidebar</span>
   </Button>
 </template>

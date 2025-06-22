@@ -26,7 +26,6 @@ onMounted(async () => {
 <template>
   <main>
     <div class="flex flex-col gap-4">
-      <h1 class="text-2xl font-bold">Dashboard</h1>
       <p>{{ dashboardData }}</p>
     </div>
   </main>
