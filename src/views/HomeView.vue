@@ -207,14 +207,14 @@ onMounted(async () => {
 
 <template>
   <div class="flex-1">
-    <div class="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-4">
-      <div class="space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-8">
+      <div class="space-y-8">
         <StatsCards :stats="stats" />
         <WorkingCapitalChart :chart-options="chartOptions" :chart-series="chartSeries" />
         <RecentTransactions :transactions="recentTransactions" />
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-8">
         <!-- <WalletCard /> -->
         <ScheduledTransfers :transfers="scheduledTransfers" />
       </div>

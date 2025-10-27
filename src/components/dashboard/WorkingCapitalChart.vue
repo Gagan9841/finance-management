@@ -36,7 +36,7 @@ defineProps<{
     </CardHeader>
     <CardContent>
       <div class="h-80">
-        <ApexChart type="area" height="100%" :options="chartOptions" :series="chartSeries" />
+        <apexchart type="area" height="100%" :options="chartOptions" :series="chartSeries" />
       </div>
     </CardContent>
   </Card>

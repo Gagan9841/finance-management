@@ -113,6 +113,7 @@ const form = reactive({
 const handleSubmit = async () => {
   try {
     const response = await login(form)
+    console.log(response)
     setUser(response.data.user)
     setToken(response.data.token)
     await new Promise((resolve) => setTimeout(resolve, 1000))
