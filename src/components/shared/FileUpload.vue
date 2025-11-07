@@ -2,7 +2,6 @@
   <div class="space-y-3">
     <Label :for="id">{{ label }}</Label>
 
-    <!-- File Input -->
     <div class="relative">
       <Input
         :id="id"
@@ -14,7 +13,6 @@
         @change="onChange"
       />
 
-      <!-- Custom Upload Button -->
       <div
         class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
         :class="{ 'border-blue-500 bg-blue-50': isDragOver }"
@@ -32,7 +30,6 @@
       </div>
     </div>
 
-    <!-- File List -->
     <div v-if="files.length" class="space-y-2">
       <h4 class="text-sm font-medium text-gray-900">Selected Files</h4>
       <div class="space-y-2">
@@ -92,7 +89,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'uploaded', files: { name: string; url: string }[]): void
+  (e: 'uploaded', files: FileList): void
   (e: 'error', message: string): void
 }>()
 
@@ -120,15 +117,12 @@ function handleDrop(e: DragEvent) {
 }
 
 function processFiles(newFiles: File[]) {
-  // Validate files
   const validFiles = newFiles.filter((file) => {
-    // Check file size
     if (props.maxSize && file.size > props.maxSize) {
       emit('error', `File ${file.name} exceeds maximum size of ${formatFileSize(props.maxSize)}`)
       return false
     }
 
-    // Check file type
     if (
       props.accept &&
       !props.accept
@@ -142,7 +136,6 @@ function processFiles(newFiles: File[]) {
     return true
   })
 
-  // Check max files limit
   if (props.maxFiles) {
     const totalFiles = files.value.length + validFiles.length
     if (totalFiles > props.maxFiles) {
@@ -151,7 +144,6 @@ function processFiles(newFiles: File[]) {
     }
   }
 
-  // Add valid files
   const newFileItems = validFiles.map((file, idx) => ({
     id: `${Date.now()}-${idx}`,
     file,
@@ -179,18 +171,20 @@ function simulateUpload() {
     })
     if (done) {
       clearInterval(interval)
-      const uploadedFiles = files.value.map((f: FileItem) => ({
-        name: f.file.name,
-        url: URL.createObjectURL(f.file),
-      }))
-      emit('uploaded', uploadedFiles)
+      const dataTransfer = new DataTransfer()
+      files.value.forEach((f: FileItem) => {
+        dataTransfer.items.add(f.file)
+      })
+      const fileList = dataTransfer.files
+      emit('uploaded', fileList)
 
-      // Show success toast
-      const fileCount = uploadedFiles.length
-      const fileNames = uploadedFiles.map((f) => f.name).join(', ')
+      const fileCount = fileList.length
+      const fileNames = Array.from(fileList)
+        .map((f) => f.name)
+        .join(', ')
       const message =
         fileCount === 1
-          ? `File "${uploadedFiles[0].name}" uploaded successfully`
+          ? `File "${fileList[0].name}" uploaded successfully`
           : `${fileCount} files uploaded successfully: ${fileNames}`
 
       showToast(message, 'success', 3000)

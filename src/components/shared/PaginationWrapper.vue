@@ -71,9 +71,7 @@ function handlePageInputKeydown(event: KeyboardEvent) {
 
 <template>
   <div class="space-y-4">
-    <!-- Info and Controls Row -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <!-- Range Info -->
       <div class="flex items-center gap-4">
         <div>
           <p class="text-sm font-medium text-foreground mt-1">
@@ -135,7 +133,7 @@ function handlePageInputKeydown(event: KeyboardEvent) {
         :show-edges="showEdges"
         :disabled="disabled"
       >
-        <PaginationList v-slot="slotProps" class="flex items-center gap-1">
+        <PaginationContent v-slot="slotProps" class="flex items-center gap-1">
           <!-- First Page Button -->
           <PaginationFirst v-if="showEdges" class="hidden lg:inline-flex">
             <Button
@@ -150,7 +148,7 @@ function handlePageInputKeydown(event: KeyboardEvent) {
           </PaginationFirst>
 
           <!-- Previous Button -->
-          <PaginationPrev>
+          <PaginationPrevious>
             <Button
               variant="outline"
               size="icon"
@@ -160,11 +158,11 @@ function handlePageInputKeydown(event: KeyboardEvent) {
               <span class="sr-only">Go to previous page</span>
               <Iconify icon="lucide:chevron-left" class="h-4 w-4" />
             </Button>
-          </PaginationPrev>
+          </PaginationPrevious>
 
           <!-- Page Numbers -->
           <template v-for="(item, index) in slotProps?.items ?? []" :key="index">
-            <PaginationListItem v-if="item.type === 'page'" :value="item.value" as-child>
+            <PaginationItem v-if="item.type === 'page'" :value="item.value" as-child>
               <Button
                 :variant="item.value === page ? 'default' : 'outline'"
                 class="w-8 h-8 p-0 text-xs font-medium transition-all duration-200"
@@ -172,7 +170,7 @@ function handlePageInputKeydown(event: KeyboardEvent) {
               >
                 {{ item.value }}
               </Button>
-            </PaginationListItem>
+            </PaginationItem>
 
             <PaginationEllipsis
               v-else
@@ -183,7 +181,6 @@ function handlePageInputKeydown(event: KeyboardEvent) {
             </PaginationEllipsis>
           </template>
 
-          <!-- Next Button -->
           <PaginationNext>
             <Button
               variant="outline"
@@ -196,7 +193,6 @@ function handlePageInputKeydown(event: KeyboardEvent) {
             </Button>
           </PaginationNext>
 
-          <!-- Last Page Button -->
           <PaginationLast v-if="showEdges" class="hidden lg:inline-flex">
             <Button
               variant="outline"
@@ -208,7 +204,7 @@ function handlePageInputKeydown(event: KeyboardEvent) {
               <Iconify icon="lucide:chevron-right" class="h-4 w-4" />
             </Button>
           </PaginationLast>
-        </PaginationList>
+        </PaginationContent>
       </Pagination>
     </div>
   </div>

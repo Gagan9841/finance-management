@@ -52,7 +52,7 @@
 
     <div v-if="showFiltersDropdown" class="p-4 border-b bg-muted/50">
       <div class="grid gap-4 md:grid-cols-3">
-        <FormField v-for="filter in availableFilters" :key="filter.key" :name="filter.key">
+        <FormField v-for="filter in availableFilters" :key="filter.key">
           <FormItem>
             <FormLabel>{{ filter.label }}</FormLabel>
             <FormControl>

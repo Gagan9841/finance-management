@@ -9,7 +9,7 @@ const defaultErrorHandler = (error: AxiosError<ApiResponse<unknown>>) => {
 }
 
 export function usePagination<T>(
-  fetchFunction: (params: Record<string, any>) => Promise<PaginationResponse<T> | T[]>,
+  fetchFunction: (params: Record<string, unknown>) => Promise<PaginationResponse<T> | T[]>,
   handleError: (error: AxiosError<ApiResponse<T>>) => void = defaultErrorHandler,
   options: PaginationOptions = {},
 ) {
@@ -30,6 +30,8 @@ export function usePagination<T>(
   const lastPage = ref(1)
   const hasError = ref(false)
   const isPaginated = ref(true)
+  const from = ref(0)
+  const to = ref(0)
 
   const getBaseParams = () => ({
     page: currentPage.value,
@@ -39,13 +41,22 @@ export function usePagination<T>(
   })
 
   const loadPage = debounce(
-    async (customParams: Record<string, any> = {}): Promise<T[] | undefined> => {
+    async (
+      page: number = currentPage.value,
+      itemsPerPage: number = perPage.value,
+      customParams: Record<string, unknown> = {},
+    ): Promise<T[] | undefined> => {
       isLoading.value = true
       hasError.value = false
       try {
-        const params = { ...getBaseParams(), ...customParams }
-        const response = await fetchFunction(params)
+        const params = {
+          ...getBaseParams(),
+          page,
+          per_page: itemsPerPage,
+          ...customParams,
+        }
 
+        const response = await fetchFunction(params)
         if (Array.isArray(response)) {
           isPaginated.value = false
           items.value = response
@@ -59,6 +70,9 @@ export function usePagination<T>(
           perPage.value = response.per_page
           totalItems.value = response.total
           lastPage.value = response.last_page ?? Math.ceil(response.total / response.per_page)
+          from.value = response.from || (response.current_page - 1) * response.per_page + 1
+          to.value =
+            response.to || Math.min(response.current_page * response.per_page, response.total)
         }
 
         return items.value as T[]
@@ -73,8 +87,35 @@ export function usePagination<T>(
     debounceDelay,
   )
 
+  const refresh = () => loadPage(currentPage.value, perPage.value)
+
+  const reset = (customParams: Record<string, unknown> = {}) => {
+    currentPage.value = 1
+    perPage.value = defaultPerPage
+    totalItems.value = 0
+    items.value = []
+    hasError.value = false
+    loadPage.cancel()
+    return loadPage(1, defaultPerPage, customParams)
+  }
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= lastPage.value) {
+      return loadPage(page)
+    }
+    return Promise.resolve(items.value)
+  }
+  const nextPage = () => goToPage(currentPage.value + 1)
+  const prevPage = () => goToPage(currentPage.value - 1)
+  const hasNextPage = () => currentPage.value < lastPage.value
+  const hasPrevPage = () => currentPage.value > 1
+
   watch([currentPage, perPage], () => {
     if (isPaginated.value) loadPage()
+  })
+
+  watch(perPage, (newPerPage) => {
+    if (isPaginated.value) loadPage(1, newPerPage)
   })
 
   if (autoLoad) loadPage()
@@ -91,5 +132,12 @@ export function usePagination<T>(
     hasError,
     isPaginated,
     loadPage,
+    refresh,
+    reset,
+    goToPage,
+    nextPage,
+    prevPage,
+    hasNextPage,
+    hasPrevPage,
   }
 }

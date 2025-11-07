@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { provide } from 'vue'
+import mitt from 'mitt'
 import { Toaster } from '@/components/ui/sonner'
 import 'vue-sonner/style.css'
+
+const emitter = mitt()
+provide('emitter', emitter)
 </script>
 
 <template>
