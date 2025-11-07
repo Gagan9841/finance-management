@@ -30,8 +30,8 @@
               @click="toggleFilters"
             >
               <Iconify icon="lucide:filter" class="w-4 h-4 mr-1" />
-              <Badge v-if="Object.keys(activeFilters).length > 0" variant="secondary" class="ml-2">
-                {{ Object.keys(activeFilters).length }}
+              <Badge v-if="Object.keys(localFilters).length > 0" variant="secondary" class="ml-2">
+                {{ Object.keys(localFilters).length }}
               </Badge>
             </Button>
           </slot>
@@ -52,11 +52,11 @@
 
     <div v-if="showFiltersDropdown" class="p-4 border-b bg-muted/50">
       <div class="grid gap-4 md:grid-cols-3">
-        <FormField v-for="filter in availableFilters" :key="filter.key">
+        <FormField v-for="filter in availableFilters" :key="filter.key" :name="filter.key">
           <FormItem>
             <FormLabel>{{ filter.label }}</FormLabel>
             <FormControl>
-              <Select :model-value="activeFilters[filter.key]">
+              <Select v-model="localFilters[filter.key]">
                 <SelectTrigger>
                   <SelectValue :placeholder="`Select ${filter.label.toLowerCase()}`" />
                 </SelectTrigger>
@@ -303,6 +303,9 @@ interface Filter {
   options: FilterOption[]
 }
 
+const searchQuery = ref('')
+const localFilters = ref<Record<string, string>>({})
+
 interface Props {
   columns: Column[]
   items: Record<string, unknown>[]
@@ -319,11 +322,11 @@ interface Props {
   enableSearch?: boolean
   searchPlaceholder?: string
   availableFilters?: Filter[]
-  activeFilters?: Record<string, string>
-  searchQuery?: string
-  onSearch?: (query: string) => void
-  onApplyFilters?: (filters: Record<string, string>) => void
-  onClearFilters?: () => void
+  pageLoad?: (
+    page?: number,
+    itemsPerPage?: number,
+    customParams?: Record<string, unknown>,
+  ) => Promise<unknown[] | undefined>
 }
 
 export interface TableActions<T> {
@@ -336,6 +339,7 @@ const instance = getCurrentInstance()
 const isCreateNewEnabled = computed(() => {
   return instance?.vnode?.props?.onCreateNew
 })
+
 // Default action configuration
 const DEFAULT_ACTION_CONFIG = {
   view: {
@@ -365,15 +369,15 @@ const props = withDefaults(defineProps<Props>(), {
   currentPage: 1,
   perPage: 10,
   extraActionsPosition: 'before',
-  actions: () => ({}),
   enableSearch: true,
+  actions: () => ({}),
   searchPlaceholder: 'Search...',
   availableFilters: () => [],
   activeFilters: () => ({}),
-  searchQuery: '',
   onSearch: undefined,
   onApplyFilters: undefined,
   onClearFilters: undefined,
+  pageLoad: undefined,
 })
 
 interface Emits<T> {
@@ -382,15 +386,9 @@ interface Emits<T> {
   (e: 'view-details', item: T): void
   (e: 'export'): void
   (e: 'create-new'): void
-  (e: 'update:searchQuery', query: string): void
 }
 
 const emit = defineEmits<Emits<any>>()
-
-const searchQuery = computed({
-  get: () => props.searchQuery || '',
-  set: (value) => emit('update:searchQuery', value),
-})
 
 /**
  * Reactive configuration object for table actions.
@@ -610,23 +608,43 @@ const toggleFilters = () => {
   showFiltersDropdown.value = !showFiltersDropdown.value
 }
 
-const debouncedSearch = (() => {
-  return debounce((query: string) => {
-    props.onSearch?.(query)
-  }, 300)
-})()
+const buildSearchParams = () => {
+  const params: Record<string, unknown> = {}
 
-const handleSearch = () => debouncedSearch(searchQuery.value)
+  if (searchQuery.value) {
+    params.search = searchQuery.value
+  }
 
-watch(searchQuery, handleSearch)
+  Object.keys(localFilters.value).forEach((key) => {
+    if (localFilters.value[key]) {
+      params[key] = localFilters.value[key]
+    }
+  })
+
+  return params
+}
+
+const handleSearch = debounce(() => {
+  if (props.pageLoad) {
+    const params = buildSearchParams()
+    props.pageLoad(1, props.perPage, params)
+  }
+}, 300)
 
 const applyFilters = () => {
-  props.onApplyFilters?.(props.activeFilters)
+  if (props.pageLoad) {
+    const params = buildSearchParams()
+    props.pageLoad(1, props.perPage, params)
+  }
   showFiltersDropdown.value = false
 }
 
 const clearFilters = () => {
-  props.onClearFilters?.()
+  localFilters.value = {}
+  searchQuery.value = ''
+  if (props.pageLoad) {
+    props.pageLoad(1, props.perPage, {})
+  }
   showFiltersDropdown.value = false
 }
 

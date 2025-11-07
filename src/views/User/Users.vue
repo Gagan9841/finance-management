@@ -7,6 +7,7 @@
       :current-page="currentPage"
       :per-page="perPage"
       :show-pagination="true"
+      :page-load="loadPage"
       @create-new="handleCreateNew"
       @edit="handleEdit"
       @delete="handleDelete"
@@ -54,7 +55,7 @@ const columns = ref([
   { key: 'email', heading: 'Email' },
 ])
 
-const loadUsers = async (params: Record<string, any>) => {
+const loadUsers = async (params: Record<string, unknown>) => {
   const response = await getUsers(params)
   return response
 }
@@ -66,6 +67,7 @@ const {
   perPage,
   totalItems,
   refresh,
+  loadPage,
 } = usePagination(loadUsers, handleError, {
   autoLoad: true,
 })

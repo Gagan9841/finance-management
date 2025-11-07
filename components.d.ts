@@ -99,7 +99,7 @@ declare module 'vue' {
     FormItem: typeof import('./src/components/ui/form/FormItem.vue')['default']
     FormLabel: typeof import('./src/components/ui/form/FormLabel.vue')['default']
     FormMessage: typeof import('./src/components/ui/form/FormMessage.vue')['default']
-    GenericTable: typeof import('./src/components/generics/GenericTable.vue')['default']
+    GenericTable: typeof import('./src/components/shared/GenericTable.vue')['default']
     Header: typeof import('./src/components/layouts/Header.vue')['default']
     Iconify: typeof import('@iconify/vue')['Iconify']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
