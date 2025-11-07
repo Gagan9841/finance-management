@@ -12,7 +12,7 @@
       <Separator orientation="vertical" class="mr-2 h-4" />
       <div class="flex items-center gap-2">
         <h1 class="text-2xl font-bold">
-          {{ route.fullPath === '/' ? 'Dashboard' : route.fullPath.split('/').pop() }}
+          {{ getRouteTitle() }}
         </h1>
       </div>
     </div>
@@ -144,5 +144,13 @@ const markAsRead = (id: number) => {
   notifications.value = notifications.value.map((notification) =>
     notification.id === id ? { ...notification, read: true } : notification,
   )
+}
+
+const getRouteTitle = () => {
+  if (route.fullPath === '/') return 'Dashboard'
+  const segments = route.fullPath.split('/')
+  const last = segments.pop()
+  if (!last) return ''
+  return last.charAt(0).toUpperCase() + last.slice(1)
 }
 </script>

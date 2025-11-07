@@ -58,8 +58,12 @@ const data: { navMain: NavItem[]; navFooter: NavFooter[] } = {
     },
     {
       title: 'Settings',
-      url: '/settings',
       icon: 'material-symbols:settings',
+      url: '/settings',
+      children: [
+        { title: 'Profile', url: '/settings/profile', icon: 'material-symbols:person' },
+        { title: 'Password', url: '/settings/password', icon: 'material-symbols:lock' },
+      ],
     },
   ],
   navFooter: [

@@ -4,8 +4,8 @@ export interface User {
   name: string
   avatar?: string
   role: string
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface RegisterUser {

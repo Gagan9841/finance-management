@@ -4,8 +4,8 @@
       <AppSidebar />
       <SidebarInset>
         <Header />
-        <main class="flex flex-1 flex-col gap-2 px-2 py-2 w-full">
-          <div class="flex-1 rounded-xl p-4 bg-background">
+        <main class="flex flex-1 flex-col gap-2 px-1 py-1 w-full">
+          <div class="flex-1 rounded-xl p-2 bg-background">
             <router-view />
           </div>
         </main>
