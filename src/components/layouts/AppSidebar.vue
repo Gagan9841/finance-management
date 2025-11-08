@@ -38,6 +38,19 @@ const data: { navMain: NavItem[]; navFooter: NavFooter[] } = {
       url: '/',
     },
     {
+      title: 'Setup',
+      icon: 'hugeicons:setup-01',
+      url: '/setup',
+      children: [
+        { title: 'Payables', url: '/setup/payables', icon: 'game-icons:pay-money' },
+        {
+          title: 'Receivables',
+          url: '/setup/receivables',
+          icon: 'streamline-plump:payment-recieve-7-remix',
+        },
+      ],
+    },
+    {
       title: 'Transactions',
       url: '/transactions',
       icon: 'material-symbols:swap-horiz',
@@ -61,7 +74,7 @@ const data: { navMain: NavItem[]; navFooter: NavFooter[] } = {
       icon: 'material-symbols:settings',
       url: '/settings',
       children: [
-        { title: 'Profile', url: '/settings/profile', icon: 'material-symbols:person' },
+        { title: 'Users', url: '/settings/users', icon: 'material-symbols:person' },
         { title: 'Password', url: '/settings/password', icon: 'material-symbols:lock' },
       ],
     },

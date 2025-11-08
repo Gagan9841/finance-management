@@ -1,8 +1,7 @@
 <template>
   <div>
-    <AlertDialog>
-      <AlertDialogTrigger>Open</AlertDialogTrigger>
-      <AlertDialogContent>
+    <AlertDialog :open="isOpen">
+      <AlertDialogContent class="bg-red-200">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -11,8 +10,16 @@
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel @click="handleCancel">Cancel</AlertDialogCancel>
-          <AlertDialogAction @click="handleConfirm">Continue</AlertDialogAction>
+          <AlertDialogCancel
+            class="bg-gray-200 cursor-pointer text-gray-800 hover:bg-gray-300"
+            @click="handleCancel"
+            >Cancel</AlertDialogCancel
+          >
+          <AlertDialogAction
+            class="bg-destructive cursor-pointer text-destructive-foreground hover:bg-destructive/90"
+            @click="handleConfirm"
+            >Continue</AlertDialogAction
+          >
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, inject } from 'vue'
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
-import * as z from 'zod'
+import { ref, onMounted, onBeforeUnmount, inject, computed } from 'vue'
 import type { Fields } from '@/types/form'
 import { api } from '@/utils/apiRequest'
 import { useResponse } from '@/composables/useResponse'
@@ -29,32 +26,26 @@ const { handleResponse, handleError } = useResponse<any>()
 
 const emitter: any = inject('emitter')
 
-const defaultValues = Object.fromEntries(
-  props.fields.map((f) => [f.name, f.type === 'file' ? [] : '']),
+const formData = ref<Record<string, any>>(
+  Object.fromEntries(props.fields.map((f) => [f.name, f.type === 'file' ? [] : ''])),
 )
-const { handleSubmit, resetForm, setValues, values } = useForm({
-  validationSchema: toTypedSchema(
-    z.object(
-      Object.fromEntries(
-        props.fields.map((f) => [f.name, f.type === 'file' ? z.any() : z.string().optional()]),
-      ),
-    ),
-  ),
-  initialValues: defaultValues,
-})
+
+const defaultValues = computed(() =>
+  Object.fromEntries(props.fields.map((f) => [f.name, f.type === 'file' ? [] : ''])),
+)
 
 function onFileChange({ name, files }: { name: string; files: FileList }) {
   const dt = new DataTransfer()
   ;[...files].forEach((f) => dt.items.add(f))
-  setValues({ [name]: [...(values[name] ?? []), ...dt.files] })
+  formData.value[name] = [...(formData.value[name] ?? []), ...dt.files]
 }
 
 function onRemoveFile({ name, file }: { name: string; file: any }) {
   if (file.id) {
     api
       .delete(props.fileDeleteUri ?? '', { data: { id: file.id } })
-      .then((response) => {
-        handleResponse(response)
+      .then((r) => {
+        handleResponse(r)
         refreshFileList(name)
       })
       .catch(handleError)
@@ -64,20 +55,19 @@ function onRemoveFile({ name, file }: { name: string; file: any }) {
 }
 
 function refreshFileList(name: string, remove?: any) {
-  const current = values[name] ?? []
-  const filtered = remove
-    ? current.filter((f: any) => f.name !== remove.name && f.id !== remove.id)
-    : current
-  setValues({ [name]: filtered })
+  const currentFile = formData.value[name] ?? []
+  formData.value[name] = remove
+    ? currentFile.filter((f: any) => f.name !== remove.name && f.id !== remove.id)
+    : currentFile
 }
 
-const submitForm = handleSubmit(async (data) => {
+async function submitForm() {
   isLoading.value = true
-  console.log(data)
   const fd = new FormData()
 
   props.fields.forEach((f) => {
-    const val = data[f.name]
+    const val = formData.value[f.name]
+
     if (f.type === 'file') {
       ;(val ?? []).forEach((file: any) => {
         if (!file.id) fd.append('files[]', file)
@@ -94,15 +84,11 @@ const submitForm = handleSubmit(async (data) => {
 
   try {
     if (isEditing.value) {
-      await api
-        .put(props.apiSlug, data.id, { data: fd })
-        .then((response) => handleResponse(response))
-        .catch(handleError)
+      // assume payload has an `id` field for edit
+      const id = formData.value.id
+      await api.put(props.apiSlug, id, { data: fd }).then(handleResponse).catch(handleError)
     } else {
-      await api
-        .post(props.apiSlug, fd)
-        .then((response) => handleResponse(response))
-        .catch(handleError)
+      await api.post(props.apiSlug, fd).then(handleResponse).catch(handleError)
     }
     close()
     emit('refresh')
@@ -111,26 +97,26 @@ const submitForm = handleSubmit(async (data) => {
   } finally {
     isLoading.value = false
   }
-})
+}
 
 function openCreate() {
   startLoading()
   isEditing.value = false
-  resetForm({ values: defaultValues })
+  formData.value = { ...defaultValues.value }
   stopLoading()
   isOpen.value = true
 }
 function openEdit(payload: any) {
   startLoading()
   isEditing.value = true
-  setValues({ ...payload })
+  formData.value = { ...payload }
   stopLoading()
   isOpen.value = true
 }
 function close() {
   stopLoading()
   isOpen.value = false
-  resetForm()
+  formData.value = { ...defaultValues.value }
   stopLoading()
 }
 
@@ -164,8 +150,8 @@ onBeforeUnmount(() => {
             <div v-for="field in props.fields" :key="field.name">
               <FormFields
                 :field="field"
-                :model-value="values[field.name]"
-                @update:model-value="(v) => setValues({ [field.name]: v })"
+                :model-value="formData[field.name]"
+                @update:model-value="(v) => (formData[field.name] = v)"
                 @file-change="onFileChange"
                 @remove-file="onRemoveFile"
               />

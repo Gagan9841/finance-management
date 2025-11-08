@@ -164,14 +164,14 @@
                     :item="item"
                     :value="getItemValue(item, column.key)"
                   >
-                    <template v-if="column.key === 'status'">
+                    <template v-if="column.statusMap || column.key === 'status'">
                       <span
                         :class="[
                           'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium',
-                          getStatusClass(getItemValue(item, column.key)),
+                          getStatusClass(getItemValue(item, column.key), column),
                         ]"
                       >
-                        {{ getItemValue(item, column.key) }}
+                        {{ getStatusLabel(getItemValue(item, column.key), column) }}
                       </span>
                     </template>
                     <template v-else>
@@ -272,11 +272,17 @@ import {
 import debounce from '@/utils/debounce'
 import { FormField } from '../ui/form'
 
+interface StatusMapItem {
+  label: string
+  class: string
+}
+
 interface Column {
   key: string
   heading: string
   headerClass?: string
   cellClass?: string
+  statusMap?: Record<string | number, StatusMapItem>
 }
 
 interface ActionItem {
@@ -360,6 +366,31 @@ const DEFAULT_ACTION_CONFIG = {
   extraActionsPosition: 'before' as const,
 }
 
+// Default status map for integer values (0 = inactive, 1 = active)
+const DEFAULT_STATUS_MAP: Record<string | number, StatusMapItem> = {
+  0: {
+    label: 'Inactive',
+    class: 'bg-red-100 text-red-800',
+  },
+  1: {
+    label: 'Active',
+    class: 'bg-green-100 text-green-800',
+  },
+  // Also support string values for backward compatibility
+  inactive: {
+    label: 'Inactive',
+    class: 'bg-red-100 text-red-800',
+  },
+  active: {
+    label: 'Active',
+    class: 'bg-green-100 text-green-800',
+  },
+  pending: {
+    label: 'Pending',
+    class: 'bg-yellow-100 text-yellow-800',
+  },
+}
+
 const props = withDefaults(defineProps<Props>(), {
   hasActions: true,
   canEdit: true,
@@ -373,10 +404,6 @@ const props = withDefaults(defineProps<Props>(), {
   actions: () => ({}),
   searchPlaceholder: 'Search...',
   availableFilters: () => [],
-  activeFilters: () => ({}),
-  onSearch: undefined,
-  onApplyFilters: undefined,
-  onClearFilters: undefined,
   pageLoad: undefined,
 })
 
@@ -529,26 +556,37 @@ const getItemValue = (item: any, key: string) => {
 }
 
 /**
- * Returns the CSS class string based on the provided status.
+ * Returns the status label based on the provided status value.
+ * Uses column's statusMap if provided, otherwise falls back to default map.
  *
- * @param {any} status - The status value to determine the CSS class for.
- * @returns {string} - The corresponding CSS class string for the given status.
- *
- * The status can be one of the following:
- * - 'active': Returns 'bg-green-100 text-green-800'
- * - 'inactive': Returns 'bg-red-100 text-red-800'
- * - 'pending': Returns 'bg-yellow-100 text-yellow-800'
- * - Any other value: Returns 'bg-gray-100 text-gray-800'
+ * @param {any} status - The status value (can be integer or string).
+ * @param {Column} column - The column definition which may contain a statusMap.
+ * @returns {string} - The label for the given status.
  */
-const getStatusClass = (status: unknown): string => {
-  const statusMap: Record<string, string> = {
-    active: 'bg-green-100 text-green-800',
-    inactive: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    default: 'bg-gray-100 text-gray-800',
-  }
+const getStatusLabel = (status: unknown, column: Column): string => {
+  const statusValue = status !== null && status !== undefined ? status : ''
+  const statusMap = column.statusMap || DEFAULT_STATUS_MAP
+  const statusItem =
+    statusMap[statusValue as string | number] || statusMap[String(statusValue).toLowerCase()]
 
-  return statusMap[String(status).toLowerCase()] || statusMap.default
+  return statusItem?.label || String(statusValue)
+}
+
+/**
+ * Returns the CSS class string based on the provided status.
+ * Uses column's statusMap if provided, otherwise falls back to default map.
+ *
+ * @param {any} status - The status value (can be integer or string).
+ * @param {Column} column - The column definition which may contain a statusMap.
+ * @returns {string} - The corresponding CSS class string for the given status.
+ */
+const getStatusClass = (status: unknown, column: Column): string => {
+  const statusValue = status !== null && status !== undefined ? status : ''
+  const statusMap = column.statusMap || DEFAULT_STATUS_MAP
+  const statusItem =
+    statusMap[statusValue as string | number] || statusMap[String(statusValue).toLowerCase()]
+
+  return statusItem?.class || 'bg-gray-100 text-gray-800'
 }
 
 /**

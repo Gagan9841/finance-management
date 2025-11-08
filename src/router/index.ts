@@ -20,31 +20,11 @@ const router = createRouter({
           name: 'users',
           component: () => import('../views/User/Users.vue'),
         },
-        // {
-        //   path: 'dashboard',
-        //   name: 'dashboard',
-        //   component: () => import('../views/DashboardView.vue'),
-        // },
-        // {
-        //   path: 'transactions',
-        //   name: 'transactions',
-        //   component: () => import('../views/TransactionsView.vue'),
-        // },
-        // {
-        //   path: 'invoices',
-        //   name: 'invoices',
-        //   component: () => import('../views/InvoicesView.vue'),
-        // },
-        // {
-        //   path: 'wallets',
-        //   name: 'wallets',
-        //   component: () => import('../views/WalletsView.vue'),
-        // },
-        // {
-        //   path: 'settings',
-        //   name: 'settings',
-        //   component: () => import('../views/SettingsView.vue'),
-        // },
+        {
+          path: 'setup/payables',
+          name: 'payables',
+          component: () => import('../views/setup/Payable.vue'),
+        },
       ],
     },
     {
